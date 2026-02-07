@@ -5,15 +5,15 @@ import gsap from 'gsap';
 const exercises = [
   { name: "Caminhada", duration: 600, rest: 0, videoId: "vxdlB3SnkGQ", instructions: "Comece com 10 minutos de caminhada para aquecer." }, // 10 mins = 600s
   { name: "Agachamento Sumô", duration: 40, rest: 20, videoId: "v-UWXZVE-LE", instructions: "Pés afastados, pontas para fora. Mantenha as costas retas." },
-  { name: "Afundo Alternado", duration: 40, rest: 20, videoId: "S3G7S8S6", instructions: "Joelhos a 90 graus. Alterne as pernas." }, // Placeholder ID
-  { name: "Stiff", duration: 40, rest: 20, videoId: "0eUTHCFnP0w", instructions: "Joelhos levemente flexionados, desça o tronco mantendo a postura." },
-  { name: "Panturrilhas (Insistindo 3x)", duration: 40, rest: 20, videoId: "Yp3T4Dk5", instructions: "Suba na ponta dos pés, insista 3 vezes em cima antes de descer." },
-  { name: "Remada Curvada Supinada (4x)", duration: 40, rest: 20, videoId: "xNGcrKTFdfI", instructions: "Tronco inclinado, palmas para frente. Puxe a barra/peso em direção ao quadril. (4 séries)" },
-  { name: "Rosca Direta Uni + Bilateral (4x)", duration: 40, rest: 20, videoId: "b8G9S3F2", instructions: "Uma repetição unilateral cada braço, depois uma bilateral. (4 séries)" },
-  { name: "Elevação Frontal + Lateral", duration: 40, rest: 20, videoId: "L9H2K1J4", instructions: "Eleve os braços à frente, desça, eleve ao lado." },
-  { name: "Pullover + Crucifixo", duration: 40, rest: 20, videoId: "_N4bQ1y0eGA", instructions: "Combine os movimentos de peito e costas." },
-  { name: "Abdominal Oblíquo Sentado", duration: 40, rest: 20, videoId: "A7D5G3H2", instructions: "Sentado, gire o tronco tocando cotovelo no joelho oposto." },
-  { name: "Extensão de Quadril em Pé", duration: 40, rest: 20, videoId: "E4R5T6Y7", instructions: "Leve a perna para trás contraindo o glúteo." },
+  { name: "Afundo Alternado", duration: 40, rest: 20, videoId: "HDHPoojaea4", instructions: "Joelhos a 90 graus. Alterne as pernas." },
+  { name: "Stiff", duration: 40, rest: 20, videoId: "3bFsRPWZMfk", instructions: "Joelhos levemente flexionados, desça o tronco mantendo a postura." },
+  { name: "Panturrilhas (Insistindo 3x)", duration: 40, rest: 20, videoId: "TM_SXzY-qbk", instructions: "Suba na ponta dos pés, insista 3 vezes em cima antes de descer." },
+  { name: "Remada Curvada Supinada (4x)", duration: 40, rest: 20, videoId: "TD00shuX6hA", instructions: "Tronco inclinado, palmas para frente. Puxe a barra/peso em direção ao quadril. (4 séries)" },
+  { name: "Rosca Direta Uni + Bilateral (4x)", duration: 40, rest: 20, videoId: "fvSQWdFTRIo", instructions: "Uma repetição unilateral cada braço, depois uma bilateral. (4 séries)" },
+  { name: "Elevação Frontal + Lateral", duration: 40, rest: 20, videoId: "BVjcSE2my4w", instructions: "Eleve os braços à frente, desça, eleve ao lado." },
+  { name: "Pullover + Crucifixo", duration: 40, rest: 20, videoId: "r2Zebn1JFqk", instructions: "Combine os movimentos de peito e costas." },
+  { name: "Abdominal Oblíquo Sentado", duration: 40, rest: 20, videoId: "V7RaxNF4aUA", instructions: "Sentado, gire o tronco tocando cotovelo no joelho oposto." },
+  { name: "Extensão de quadril com caneleira", duration: 40, rest: 20, videoId: "NNXxKNhBb9Q", instructions: "Leve a perna para trás contraindo o glúteo." },
   { name: "Alongamentos Finais", duration: 300, rest: 0, videoId: "d9e0Q-jB_8E", instructions: "Relaxe e alongue todos os músculos trabalhados." }
 ];
 
@@ -73,13 +73,21 @@ window.onYouTubeIframeAPIReady = function() {
       'rel': 0
     },
     events: {
-      'onReady': onPlayerReady
+      'onReady': onPlayerReady,
+      'onStateChange': onPlayerStateChange
     }
   });
 };
 
 function onPlayerReady(event) {
   // Player ready
+}
+
+function onPlayerStateChange(event) {
+  // If video ends (state=0), play again
+  if (event.data === 0) {
+    youtubePlayer.playVideo();
+  }
 }
 
 function loadVideo(videoId) {
@@ -324,21 +332,31 @@ function formatTime(seconds) {
 }
 
 function playNotificationSound() {
-  // Simple beep logic using AudioContext or just console log for now
-  // Real implementation would use an Audio object
   const context = new (window.AudioContext || window.webkitAudioContext)();
+  
+  // Create oscillator and gain node
   const oscillator = context.createOscillator();
   const gainNode = context.createGain();
   
   oscillator.connect(gainNode);
   gainNode.connect(context.destination);
   
-  oscillator.type = 'sine';
-  oscillator.frequency.value = isResting ? 800 : 400; // Higher pitch for work start
-  gainNode.gain.value = 0.1;
+  // Configure sound
+  oscillator.type = 'triangle'; // More "beep-like" than sine
   
-  oscillator.start();
-  setTimeout(() => oscillator.stop(), 500);
+  // Frequency logic:
+  // If isResting=true -> Rest ending -> High pitch (start exercise!)
+  // If isResting=false -> Exercise ending -> Low pitch (rest time)
+  oscillator.frequency.value = isResting ? 880 : 440; 
+  
+  // Volume control (envelope)
+  const now = context.currentTime;
+  gainNode.gain.setValueAtTime(0.3, now);
+  gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+  
+  // Play
+  oscillator.start(now);
+  oscillator.stop(now + 0.5);
 }
 
 // Start
