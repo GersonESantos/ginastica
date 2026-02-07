@@ -3,17 +3,17 @@ import gsap from 'gsap';
 
 // --- Exercise Data ---
 const exercises = [
-  { name: "Caminhada", duration: 600, rest: 0, videoId: "vxdlB3SnkGQ", instructions: "Comece com 10 minutos de caminhada para aquecer." }, // 10 mins = 600s
-  { name: "Agachamento Sumô", duration: 30, rest: 20, videoId: "v-UWXZVE-LE", instructions: "Pés afastados, pontas para fora. Mantenha as costas retas." },
-  { name: "Afundo Alternado", duration: 30, rest: 20, videoId: "HDHPoojaea4", instructions: "Joelhos a 90 graus. Alterne as pernas." },
-  { name: "Stiff", duration: 30, rest: 20, videoId: "3bFsRPWZMfk", instructions: "Joelhos levemente flexionados, desça o tronco mantendo a postura." },
-  { name: "Panturrilhas (Insistindo 3x)", duration: 30, rest: 20, videoId: "TM_SXzY-qbk", instructions: "Suba na ponta dos pés, insista 3 vezes em cima antes de descer." },
-  { name: "Remada Curvada Supinada (4x)", duration: 30, rest: 20, videoId: "TD00shuX6hA", instructions: "Tronco inclinado, palmas para frente. Puxe a barra/peso em direção ao quadril. (4 séries)" },
-  { name: "Rosca Direta Uni + Bilateral (4x)", duration: 30, rest: 20, videoId: "fvSQWdFTRIo", instructions: "Uma repetição unilateral cada braço, depois uma bilateral. (4 séries)" },
-  { name: "Elevação Frontal + Lateral", duration: 30, rest: 20, videoId: "BVjcSE2my4w", instructions: "Eleve os braços à frente, desça, eleve ao lado." },
-  { name: "Pullover + Crucifixo", duration: 30, rest: 20, videoId: "r2Zebn1JFqk", instructions: "Combine os movimentos de peito e costas." },
-  { name: "Abdominal Oblíquo Sentado", duration: 30, rest: 20, videoId: "V7RaxNF4aUA", instructions: "Sentado, gire o tronco tocando cotovelo no joelho oposto." },
-  { name: "Extensão de quadril com caneleira", duration: 30, rest: 20, videoId: "NNXxKNhBb9Q", instructions: "Leve a perna para trás contraindo o glúteo." },
+  { name: "Caminhada", duration: 600, rest: 15, videoId: "vxdlB3SnkGQ", instructions: "Comece com 10 minutos de caminhada para aquecer." }, // 10 mins = 600s
+  { name: "Agachamento Sumô", duration: 30, rest: 15, videoId: "v-UWXZVE-LE", instructions: "Pés afastados, pontas para fora. Mantenha as costas retas." },
+  { name: "Afundo Alternado", duration: 30, rest: 15, videoId: "HDHPoojaea4", instructions: "Joelhos a 90 graus. Alterne as pernas." },
+  { name: "Stiff", duration: 30, rest: 15, videoId: "3bFsRPWZMfk", instructions: "Joelhos levemente flexionados, desça o tronco mantendo a postura." },
+  { name: "Panturrilhas (Insistindo 3x)", duration: 30, rest: 15, videoId: "TM_SXzY-qbk", instructions: "Suba na ponta dos pés, insista 3 vezes em cima antes de descer." },
+  { name: "Remada Curvada Supinada (4x)", duration: 30, rest: 15, videoId: "TD00shuX6hA", instructions: "Tronco inclinado, palmas para frente. Puxe a barra/peso em direção ao quadril. (4 séries)" },
+  { name: "Rosca Direta Uni + Bilateral (4x)", duration: 30, rest: 15, videoId: "fvSQWdFTRIo", instructions: "Uma repetição unilateral cada braço, depois uma bilateral. (4 séries)" },
+  { name: "Elevação Frontal + Lateral", duration: 30, rest: 15, videoId: "BVjcSE2my4w", instructions: "Eleve os braços à frente, desça, eleve ao lado." },
+  { name: "Pullover + Crucifixo", duration: 30, rest: 15, videoId: "r2Zebn1JFqk", instructions: "Combine os movimentos de peito e costas." },
+  { name: "Abdominal Oblíquo Sentado", duration: 30, rest: 15, videoId: "V7RaxNF4aUA", instructions: "Sentado, gire o tronco tocando cotovelo no joelho oposto." },
+  { name: "Extensão de quadril com caneleira", duration: 30, rest: 15, videoId: "NNXxKNhBb9Q", instructions: "Leve a perna para trás contraindo o glúteo." },
   { name: "Alongamentos Finais", duration: 300, rest: 0, videoId: "d9e0Q-jB_8E", instructions: "Relaxe e alongue todos os músculos trabalhados." }
 ];
 
@@ -204,6 +204,7 @@ function nextExercise() {
     if (exercises[currentExerciseIndex].rest > 0) {
       isResting = true;
       timeLeft = exercises[currentExerciseIndex].rest;
+      loadVideo(REST_VIDEO_ID);
     } else {
       // If no rest, go straight to next
       currentExerciseIndex++;
@@ -291,12 +292,15 @@ function handleTimerComplete() {
     loadVideo(exercises[currentExerciseIndex].videoId);
     if(youtubePlayer) youtubePlayer.playVideo(); // Auto play next video
   } else {
-    // Exercise finished -> Rest (if applicable)
+// 15 Seconds Timer
+const REST_VIDEO_ID = "Xida-N0hxsQ";
+
     if (exercises[currentExerciseIndex].rest > 0) {
+
       isResting = true;
       timeLeft = exercises[currentExerciseIndex].rest;
-      // Optionally pause video during rest
-      // if(youtubePlayer) youtubePlayer.pauseVideo(); 
+      loadVideo(REST_VIDEO_ID);
+      if(youtubePlayer) youtubePlayer.playVideo(); 
     } else {
       // No rest, straight to next
       currentExerciseIndex++;
