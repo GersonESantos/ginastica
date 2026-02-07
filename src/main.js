@@ -3,8 +3,8 @@ import gsap from 'gsap';
 
 // --- Exercise Data ---
 const exercises = [
-  { name: "Caminhada", duration: 600, rest: 0, videoId: "enYITYwvPAQ", instructions: "Comece com 10 minutos de caminhada para aquecer." }, // 10 mins = 600s
-  { name: "Agachamento Sumô", duration: 40, rest: 20, videoId: "wQWGeM5z5l0", instructions: "Pés afastados, pontas para fora. Mantenha as costas retas." },
+  { name: "Caminhada", duration: 600, rest: 0, videoId: "vxdlB3SnkGQ", instructions: "Comece com 10 minutos de caminhada para aquecer." }, // 10 mins = 600s
+  { name: "Agachamento Sumô", duration: 40, rest: 20, videoId: "v-UWXZVE-LE", instructions: "Pés afastados, pontas para fora. Mantenha as costas retas." },
   { name: "Afundo Alternado", duration: 40, rest: 20, videoId: "S3G7S8S6", instructions: "Joelhos a 90 graus. Alterne as pernas." }, // Placeholder ID
   { name: "Stiff", duration: 40, rest: 20, videoId: "0eUTHCFnP0w", instructions: "Joelhos levemente flexionados, desça o tronco mantendo a postura." },
   { name: "Panturrilhas (Insistindo 3x)", duration: 40, rest: 20, videoId: "Yp3T4Dk5", instructions: "Suba na ponta dos pés, insista 3 vezes em cima antes de descer." },
