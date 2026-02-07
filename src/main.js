@@ -2,28 +2,40 @@ import './style.scss';
 import gsap from 'gsap';
 
 // --- Exercise Data ---
-const exercises = [
-  { name: "Caminhada", duration: 600, rest: 15, videoId: "vxdlB3SnkGQ", instructions: "Comece com 10 minutos de caminhada para aquecer." }, // 10 mins = 600s
+const warmup = { name: "Caminhada", duration: 600, rest: 15, videoId: "vxdlB3SnkGQ", instructions: "Comece com 10 minutos de caminhada para aquecer." };
+
+const workout = [
   { name: "Agachamento Sumô", duration: 30, rest: 15, videoId: "v-UWXZVE-LE", instructions: "Pés afastados, pontas para fora. Mantenha as costas retas." },
   { name: "Afundo Alternado", duration: 30, rest: 15, videoId: "HDHPoojaea4", instructions: "Joelhos a 90 graus. Alterne as pernas." },
   { name: "Stiff", duration: 30, rest: 15, videoId: "3bFsRPWZMfk", instructions: "Joelhos levemente flexionados, desça o tronco mantendo a postura." },
   { name: "Panturrilhas (Insistindo 3x)", duration: 30, rest: 15, videoId: "TM_SXzY-qbk", instructions: "Suba na ponta dos pés, insista 3 vezes em cima antes de descer." },
-  { name: "Remada Curvada Supinada (4x)", duration: 30, rest: 15, videoId: "TD00shuX6hA", instructions: "Tronco inclinado, palmas para frente. Puxe a barra/peso em direção ao quadril. (4 séries)" },
-  { name: "Rosca Direta Uni + Bilateral (4x)", duration: 30, rest: 15, videoId: "fvSQWdFTRIo", instructions: "Uma repetição unilateral cada braço, depois uma bilateral. (4 séries)" },
+  { name: "Remada Curvada Supinada", duration: 30, rest: 15, videoId: "TD00shuX6hA", instructions: "Tronco inclinado, palmas para frente. Puxe a barra/peso em direção ao quadril. (4 séries)" },
+  { name: "Rosca Direta Uni + Bilateral", duration: 30, rest: 15, videoId: "fvSQWdFTRIo", instructions: "Uma repetição unilateral cada braço, depois uma bilateral. (4 séries)" },
   { name: "Elevação Frontal + Lateral", duration: 30, rest: 15, videoId: "BVjcSE2my4w", instructions: "Eleve os braços à frente, desça, eleve ao lado." },
   { name: "Pullover + Crucifixo", duration: 30, rest: 15, videoId: "r2Zebn1JFqk", instructions: "Combine os movimentos de peito e costas." },
   { name: "Abdominal Oblíquo Sentado", duration: 30, rest: 15, videoId: "V7RaxNF4aUA", instructions: "Sentado, gire o tronco tocando cotovelo no joelho oposto." },
-  { name: "Extensão de quadril com caneleira", duration: 30, rest: 15, videoId: "NNXxKNhBb9Q", instructions: "Leve a perna para trás contraindo o glúteo." },
-  { name: "Alongamentos Finais", duration: 300, rest: 0, videoId: "d9e0Q-jB_8E", instructions: "Relaxe e alongue todos os músculos trabalhados." }
+  { name: "Extensão de quadril com caneleira", duration: 30, rest: 15, videoId: "NNXxKNhBb9Q", instructions: "Leve a perna para trás contraindo o glúteo." }
+];
+
+const cooldown = { name: "Alongamentos Finais", duration: 300, rest: 0, videoId: "d9e0Q-jB_8E", instructions: "Relaxe e alongue todos os músculos trabalhados." };
+
+// Build final list: Warmup -> Workout (with sets for logic, but single entries in array) -> Cooldown
+const exercises = [
+  { ...warmup, sets: 1 },
+  ...workout.map(ex => ({ ...ex, sets: 3 })), // Each main exercise has 3 sets
+  { ...cooldown, sets: 1 }
 ];
 
 // --- State ---
 let currentExerciseIndex = 0;
+let currentSet = 1; // Track current set (1, 2, 3)
 let isResting = false;
 let timeLeft = 0;
 let timerInterval = null;
 let isPaused = true;
 let youtubePlayer = null;
+
+
 
 // --- DOM Elements ---
 const timerDisplay = document.getElementById('timer');
@@ -105,7 +117,7 @@ function renderExerciseList() {
     li.innerHTML = `
       <div class="indicator"></div>
       <div class="info">
-        <strong>${ex.name}</strong>
+        <strong>${ex.sets > 1 ? '3x ' + ex.name : ex.name}</strong>
         <span>${formatTime(ex.duration)}</span>
       </div>
     `;
@@ -118,13 +130,28 @@ function updateUI(animate = true) {
   const ex = exercises[currentExerciseIndex];
   
   // Update Text
+  // Update Text
   if (isResting) {
     exerciseNameEl.textContent = "Descanso";
-    exerciseInstructionEl.textContent = `Próximo: ${exercises[currentExerciseIndex + 1]?.name || 'Fim'}`;
+    
+    // Determine next item: Next set of current exercise, OR next exercise entirely
+    let nextText = "";
+    if (currentSet < ex.sets) {
+       // Next is the next set of the same exercise
+       nextText = `${ex.name} ${currentSet + 1}`;
+    } else {
+       // Next is the next exercise in the list
+       const nextEx = exercises[currentExerciseIndex + 1];
+       nextText = nextEx ? nextEx.name : 'Fim';
+    }
+    
+    exerciseInstructionEl.textContent = `Próximo: ${nextText}`;
     statusLabel.textContent = "Respire fundo...";
     document.body.style.setProperty('--primary-color', '#4facfe'); // Blue for rest
   } else {
-    exerciseNameEl.textContent = ex.name;
+    // Show Set number only if exercise has multiple sets
+    const setName = ex.sets > 1 ? `${ex.name} ${currentSet}` : ex.name;
+    exerciseNameEl.textContent = setName;
     exerciseInstructionEl.textContent = ex.instructions;
     statusLabel.textContent = "EM EXECUÇÃO";
     document.body.style.setProperty('--primary-color', '#ff0080'); // Pink/Red for action
@@ -281,36 +308,59 @@ function handleTimerComplete() {
   playNotificationSound();
   
   if (isResting) {
-    // Rest finished -> Next Exercise
-    currentExerciseIndex++;
-    if (currentExerciseIndex >= exercises.length) {
-      finishWorkout();
-      return;
-    }
-    isResting = false;
-    timeLeft = exercises[currentExerciseIndex].duration;
-    loadVideo(exercises[currentExerciseIndex].videoId);
-    if(youtubePlayer) youtubePlayer.playVideo(); // Auto play next video
-  } else {
-// 15 Seconds Timer
-const REST_VIDEO_ID = "Xida-N0hxsQ";
-
-    if (exercises[currentExerciseIndex].rest > 0) {
-
-      isResting = true;
-      timeLeft = exercises[currentExerciseIndex].rest;
-      loadVideo(REST_VIDEO_ID);
-      if(youtubePlayer) youtubePlayer.playVideo(); 
+    // Rest finished -> Next Set (if applicable) OR Next Exercise
+    const ex = exercises[currentExerciseIndex];
+    if (currentSet < ex.sets) {
+      // Next Set of SAME exercise
+      currentSet++;
+      isResting = false;
+      timeLeft = ex.duration;
+      loadVideo(ex.videoId);
+      if(youtubePlayer) youtubePlayer.playVideo();
     } else {
-      // No rest, straight to next
+      // All sets done -> Next Exercise
+      currentSet = 1;
       currentExerciseIndex++;
       if (currentExerciseIndex >= exercises.length) {
         finishWorkout();
         return;
       }
+      isResting = false;
       timeLeft = exercises[currentExerciseIndex].duration;
       loadVideo(exercises[currentExerciseIndex].videoId);
-      if(youtubePlayer) youtubePlayer.playVideo();
+      if(youtubePlayer) youtubePlayer.playVideo(); 
+    }
+  } else {
+    // Exercise finished -> Rest
+    // Logic: Always rest after a set if rest > 0
+    // 15 Seconds Timer
+    const REST_VIDEO_ID = "Xida-N0hxsQ";
+
+    if (exercises[currentExerciseIndex].rest > 0) {
+      isResting = true;
+      timeLeft = exercises[currentExerciseIndex].rest;
+      loadVideo(REST_VIDEO_ID);
+      if(youtubePlayer) youtubePlayer.playVideo(); 
+    } else {
+      // No rest configured (rare in this workout)
+      // Check sets logic here too
+      const ex = exercises[currentExerciseIndex];
+      if (currentSet < ex.sets) {
+         currentSet++;
+         timeLeft = ex.duration;
+         loadVideo(ex.videoId);
+         if(youtubePlayer) youtubePlayer.playVideo();
+      } else {
+         currentSet = 1;
+         currentExerciseIndex++;
+         if (currentExerciseIndex >= exercises.length) {
+            finishWorkout();
+            return;
+         }
+         timeLeft = exercises[currentExerciseIndex].duration;
+         loadVideo(exercises[currentExerciseIndex].videoId);
+         if(youtubePlayer) youtubePlayer.playVideo();
+      }
     }
   }
   updateUI();
