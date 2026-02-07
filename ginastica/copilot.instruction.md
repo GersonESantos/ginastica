@@ -67,7 +67,7 @@ Salvo especificado o contrário, use esta stack:
 4. **Revise**: Garanta que o código atende aos padrões de qualidade e estética.
 
   
-5. 
+5. Faça uma pagina:
 nome da pagina Academia Digital
 ---
 Ginasticas

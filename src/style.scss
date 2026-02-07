@@ -1,0 +1,426 @@
+:root {
+  --primary-color: #00f2fe;
+  --secondary-color: #4facfe;
+  --accent-color: #ff0080;
+  --bg-dark: #0f172a;
+  --text-white: #ffffff;
+  --text-gray: #94a3b8;
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --font-main: 'Inter', sans-serif;
+  --font-display: 'Outfit', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--bg-dark);
+  color: var(--text-white);
+  overflow-x: hidden;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center;    /* Center vertically if height allows */
+}
+
+#app {
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.background-blobs {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.6;
+    animation: float 10s infinite ease-in-out alternate;
+  }
+
+  .blob-1 {
+    width: 400px;
+    height: 400px;
+    background: var(--primary-color);
+    top: -10%;
+    left: -10%;
+  }
+
+  .blob-2 {
+    width: 300px;
+    height: 300px;
+    background: var(--accent-color);
+    bottom: 10%;
+    right: -5%;
+    animation-delay: -5s;
+  }
+
+  .blob-3 {
+    width: 350px;
+    height: 350px;
+    background: var(--secondary-color);
+    top: 40%;
+    left: 60%;
+    animation-duration: 15s;
+  }
+}
+
+@keyframes float {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(30px, 50px) scale(1.1); }
+}
+
+.glass-container {
+  display: grid;
+  grid-template-areas: 
+    "header header"
+    "workout playlist";
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  width: 100%;
+  max-width: 1200px;
+  backdrop-filter: blur(10px); /* Just a global blur hint */
+}
+
+@media (max-width: 900px) {
+  .glass-container {
+    grid-template-areas: 
+      "header"
+      "workout"
+      "playlist";
+    grid-template-columns: 1fr;
+    padding-bottom: 80px; /* Space for fixed navigation if needed */
+  }
+}
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* Header */
+.header {
+  grid-area: header;
+  text-align: center;
+  margin-bottom: 1rem;
+  
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 3rem;
+    background: linear-gradient(135deg, var(--text-white), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -1px;
+  }
+  
+  .subtitle {
+    color: var(--text-gray);
+    font-size: 1.2rem;
+    font-weight: 300;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+}
+
+/* Workout Area */
+.workout-area {
+  grid-area: workout;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.video-container {
+  position: relative;
+  aspect-ratio: 16/9;
+  overflow: hidden;
+  padding: 0; /* Remove default padding for video frame */
+  
+  #player-wrapper {
+    width: 100%;
+    height: 100%;
+  }
+  
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    transition: opacity 0.5s ease;
+    
+    &.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+}
+
+/* Controls */
+.controls-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.5rem;
+}
+
+.timer-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  #timer {
+    font-family: var(--font-display);
+    font-size: 5rem;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 0 20px rgba(79, 172, 254, 0.5);
+  }
+
+  #status-label {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 0.9rem;
+    color: var(--primary-color);
+  }
+}
+
+.exercise-info {
+  h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+  }
+  p {
+    color: var(--text-gray);
+  }
+}
+
+.control-buttons {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+
+  .icon-btn {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid transparent;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-white);
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(255,255,255,0.2);
+      transform: scale(1.1);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+    
+    &.main-btn {
+      width: 70px;
+      height: 70px;
+      background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+      box-shadow: 0 0 20px rgba(79, 172, 254, 0.4);
+
+      &:hover {
+        box-shadow: 0 0 30px rgba(79, 172, 254, 0.6);
+      }
+    }
+  }
+}
+
+/* Playlist */
+.playlist-container {
+  grid-area: playlist;
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh; /* Scrollable if too long */
+  
+  h3 {
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: 0.5rem;
+  }
+
+  #exercise-list {
+    list-style: none;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+    
+    /* Scrollbar styling */
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: var(--glass-border);
+      border-radius: 3px;
+    }
+    
+    li {
+      padding: 1rem;
+      border-radius: 12px;
+      margin-bottom: 0.8rem;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      &:hover {
+        background: rgba(255,255,255,0.08);
+      }
+
+      &.active {
+        background: rgba(79, 172, 254, 0.2);
+        border-color: var(--secondary-color);
+        
+        .indicator {
+          background: var(--primary-color);
+          box-shadow: 0 0 10px var(--primary-color);
+        }
+      }
+
+      &.completed {
+        opacity: 0.5;
+        text-decoration: line-through;
+      }
+
+      .indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--text-gray);
+        transition: all 0.3s;
+      }
+
+      .info {
+        display: flex;
+        flex-direction: column;
+        
+        strong {
+          font-size: 0.95rem;
+        }
+        span {
+          font-size: 0.8rem;
+          color: var(--text-gray);
+        }
+      }
+    }
+  }
+}
+
+/* Button styles */
+.glow-on-hover {
+    padding: 15px 40px;
+    border: none;
+    outline: none;
+    color: #fff;
+    background: #111;
+    cursor: pointer;
+    position: relative;
+    z-index: 0;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    font-family: var(--font-display);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.glow-on-hover:before {
+    content: '';
+    background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    background-size: 400%;
+    z-index: -1;
+    filter: blur(5px);
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    animation: glowing 20s linear infinite;
+    opacity: 0;
+    transition: opacity .3s ease-in-out;
+    border-radius: 10px;
+}
+
+.glow-on-hover:active {
+    color: #000;
+}
+
+.glow-on-hover:active:after {
+    background: transparent;
+}
+
+.glow-on-hover:hover:before {
+    opacity: 1;
+}
+
+.glow-on-hover:after {
+    z-index: -1;
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #111;
+    left: 0;
+    top: 0;
+    border-radius: 10px;
+}
+
+@keyframes glowing {
+    0% { background-position: 0 0; }
+    50% { background-position: 400% 0; }
+    100% { background-position: 0 0; }
+}
