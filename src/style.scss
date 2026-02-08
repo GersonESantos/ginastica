@@ -94,7 +94,7 @@ body {
     "header header"
     "workout playlist";
   grid-template-columns: 2fr 1fr;
-  gap: 2rem;
+  gap: 1rem;
   width: 100%;
   max-width: 1200px;
   backdrop-filter: blur(10px); /* Just a global blur hint */
@@ -138,6 +138,7 @@ body {
     font-size: 3rem;
     background: linear-gradient(135deg, var(--text-white), var(--secondary-color));
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     letter-spacing: -1px;
   }
@@ -156,7 +157,7 @@ body {
   grid-area: workout;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 0.5rem;
 }
 
 .video-container {
@@ -202,7 +203,18 @@ body {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 1.5rem;
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+
+.timer-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+  flex-wrap: wrap;
+  width: 100%;
+  margin-bottom: 0;
 }
 
 .timer-display {
@@ -212,19 +224,14 @@ body {
   
   #timer {
     font-family: var(--font-display);
-    font-size: 5rem;
+    font-size: 2.5rem;
     font-weight: 700;
     line-height: 1;
     font-variant-numeric: tabular-nums;
     text-shadow: 0 0 20px rgba(79, 172, 254, 0.5);
   }
 
-  #status-label {
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    font-size: 0.9rem;
-    color: var(--primary-color);
-  }
+
 }
 
 .exercise-info {
@@ -246,8 +253,8 @@ body {
     background: rgba(255,255,255,0.1);
     border: 1px solid transparent;
     border-radius: 50%;
-    width: 50px;
-    height: 50px;
+    width: 30px;
+    height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -265,8 +272,8 @@ body {
     }
     
     &.main-btn {
-      width: 70px;
-      height: 70px;
+      width: 50px;
+      height: 50px;
       background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
       box-shadow: 0 0 20px rgba(79, 172, 254, 0.4);
 
@@ -274,6 +281,19 @@ body {
         box-shadow: 0 0 30px rgba(79, 172, 254, 0.6);
       }
     }
+  }
+
+  #status-label {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-left: 0.5rem;
+    width: auto;
+    white-space: nowrap;
+    text-align: left;
+    line-height: 1.2;
   }
 }
 
@@ -285,10 +305,20 @@ body {
   max-height: 80vh; /* Scrollable if too long */
   
   h3 {
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.5rem;
     font-size: 1.2rem;
     border-bottom: 1px solid var(--glass-border);
     padding-bottom: 0.5rem;
+    text-align: center; /* Also center the h3 if desired, but user asked for subtitle specifically */
+  }
+
+  .subtitle {
+    text-align: center;
+    color: var(--text-gray);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
   }
 
   #exercise-list {
@@ -347,13 +377,33 @@ body {
       .info {
         display: flex;
         flex-direction: column;
+        flex-grow: 1;
         
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
         strong {
           font-size: 0.95rem;
         }
+
+        .meta {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
         span {
           font-size: 0.8rem;
           color: var(--text-gray);
+        }
+
+        .sets-indicator {
+            color: var(--secondary-color);
+            font-weight: 600;
         }
       }
     }
