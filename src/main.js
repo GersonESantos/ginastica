@@ -2,9 +2,8 @@ import './style.scss';
 import gsap from 'gsap';
 
 // --- Exercise Data ---
-const warmup = { name: "Caminhada", duration: 600, rest: 15, videoId: "6v2L2UGZJAM", instructions: "Comece com 10 minutos de caminhada para aquecer." };
-
-const workout = [
+const exercises = [
+  { name: "Caminhada", duration: 600, rest: 15, videoId: "vxdlB3SnkGQ", instructions: "Comece com 10 minutos de caminhada para aquecer." }, // 10 mins = 600s
   { name: "Agachamento Sumô", duration: 30, rest: 15, videoId: "v-UWXZVE-LE", instructions: "Pés afastados, pontas para fora. Mantenha as costas retas." },
   { name: "Afundo Alternado", duration: 30, rest: 15, videoId: "HDHPoojaea4", instructions: "Joelhos a 90 graus. Alterne as pernas." },
   { name: "Stiff", duration: 30, rest: 15, videoId: "3bFsRPWZMfk", instructions: "Joelhos levemente flexionados, desça o tronco mantendo a postura." },
@@ -203,13 +202,8 @@ function renderExerciseList() {
     li.innerHTML = `
       <div class="indicator"></div>
       <div class="info">
-        <div class="info-row">
-            <strong>${ex.name}</strong>
-            <div class="meta">
-                ${ex.sets > 1 ? '<span class="sets-indicator">3x</span>' : ''}
-                <span>${formatTime(ex.duration)}</span>
-            </div>
-        </div>
+        <strong>${ex.name}</strong>
+        <span>${formatTime(ex.duration)}</span>
       </div>
     `;
     li.addEventListener('click', () => jumpToExercise(index));
@@ -436,40 +430,19 @@ async function handleTimerComplete() {
   playNotificationSound();
   
   if (isResting) {
-    // Rest finished -> Next Set (if applicable) OR Next Exercise
-    const ex = exercises[currentExerciseIndex];
-    if (currentSet < ex.sets) {
-      // Next Set of SAME exercise
-      currentSet++;
-      isResting = false;
-      updateUI(); // Update text before countdown
-      
-      await runCountdown();
-      
-      timeLeft = ex.duration;
-      loadVideo(ex.videoId);
-      if(youtubePlayer) youtubePlayer.playVideo();
-    } else {
-      // All sets done -> Next Exercise
-      currentSet = 1;
-      currentExerciseIndex++;
-      if (currentExerciseIndex >= exercises.length) {
-        finishWorkout();
-        return;
-      }
-      isResting = false;
-      updateUI(); // Update text before countdown
-
-      await runCountdown();
-
-      timeLeft = exercises[currentExerciseIndex].duration;
-      loadVideo(exercises[currentExerciseIndex].videoId);
-      if(youtubePlayer) youtubePlayer.playVideo(); 
+    // Rest finished -> Next Exercise
+    currentExerciseIndex++;
+    if (currentExerciseIndex >= exercises.length) {
+      finishWorkout();
+      return;
     }
+    isResting = false;
+    timeLeft = exercises[currentExerciseIndex].duration;
+    loadVideo(exercises[currentExerciseIndex].videoId);
+    if(youtubePlayer) youtubePlayer.playVideo(); // Auto play next video
   } else {
-    // Exercise finished -> Rest
-    // Logic: Always rest after a set if rest > 0
-    const REST_VIDEO_ID = "Xida-N0hxsQ";
+// 15 Seconds Timer
+const REST_VIDEO_ID = "Xida-N0hxsQ";
 
     if (exercises[currentExerciseIndex].rest > 0) {
       isResting = true;
@@ -481,30 +454,18 @@ async function handleTimerComplete() {
       loadVideo(REST_VIDEO_ID);
       if(youtubePlayer) youtubePlayer.playVideo(); 
     } else {
-      // No rest configured
-      const ex = exercises[currentExerciseIndex];
-      if (currentSet < ex.sets) {
-         currentSet++;
-         updateUI();
-         await runCountdown();
-         timeLeft = ex.duration;
-         loadVideo(ex.videoId);
-         if(youtubePlayer) youtubePlayer.playVideo();
-      } else {
-         currentSet = 1;
-         currentExerciseIndex++;
-         if (currentExerciseIndex >= exercises.length) {
-            finishWorkout();
-            return;
-         }
-         updateUI();
-         await runCountdown();
-         timeLeft = exercises[currentExerciseIndex].duration;
-         loadVideo(exercises[currentExerciseIndex].videoId);
-         if(youtubePlayer) youtubePlayer.playVideo();
+      // No rest, straight to next
+      currentExerciseIndex++;
+      if (currentExerciseIndex >= exercises.length) {
+        finishWorkout();
+        return;
       }
+      timeLeft = exercises[currentExerciseIndex].duration;
+      loadVideo(exercises[currentExerciseIndex].videoId);
+      if(youtubePlayer) youtubePlayer.playVideo();
     }
   }
+  updateUI();
   startTimer();
 }
 
