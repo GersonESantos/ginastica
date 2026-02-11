@@ -173,10 +173,24 @@ body {
     height: 100%;
   }
   
-  iframe {
+  iframe, video {
     width: 100%;
     height: 100%;
     border: none;
+    object-fit: cover; /* Ensure video covers the area */
+  }
+
+  .player-wrapper {
+    width: 100%;
+    height: 100%;
+    
+    &.hidden {
+      display: none;
+    }
+  }
+
+  .video-player.hidden {
+      display: none;
   }
 
   .video-overlay {

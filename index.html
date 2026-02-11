@@ -4,24 +4,30 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Academia Digital - Seu plano de treino premium em casa." />
+    <meta name="description" content="Academia Digital 60 Mais - Seu plano de treino premium em casa." />
     <!-- Google Fonts: Inter & Outfit for Premium Look -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
-    <title>Academia Digital</title>
+    <title>Academia Digital 60 Mais</title>
   </head>
   <body>
     <div id="app">
       <div class="glass-container">
         <header class="header">
-          <h1>Academia Digital</h1>
+          <h1>Academia Digital 60 Mais</h1>
         </header>
 
         <main class="workout-area">
           <div class="video-container glass-card">
             <div id="player-wrapper">
-              <div id="youtube-player"></div>
+              <div id="youtube-player-container" class="player-wrapper hidden">
+                <div id="youtube-player"></div>
+              </div>
+              <video id="main-video" class="video-player" playsinline controls loop>
+              <source src="" type="video/mp4">
+              Seu navegador não suporta vídeos HTML5.
+            </video>
             </div>
             <div class="video-overlay" id="video-overlay">
               <button id="start-btn" class="glow-on-hover">INICIAR TREINO</button>
@@ -35,16 +41,7 @@
               </div>
 
               <div class="control-buttons">
-                <button id="prev-btn" class="icon-btn" title="Anterior">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5"></line></svg>
-                </button>
-                <button id="play-pause-btn" class="icon-btn main-btn" title="Pausar/Continuar">
-                   <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                   <svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
-                </button>
-                <button id="next-btn" class="icon-btn" title="Próximo">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>
-                </button>
+                <!-- Buttons removed as per request -->
                 <p id="status-label">Pronto para começar</p>
               </div>
             </div>
@@ -59,7 +56,7 @@
 
         <aside class="playlist-container glass-card">
           <h3>Progresso do Treino</h3>
-          <p class="subtitle">Plano de Aula Fev-Mar</p>
+          <p class="subtitle">Plano de Aula Fev-Mar 2026</p>
           <ul id="exercise-list">
             <!-- Items injected by JS -->
           </ul>
